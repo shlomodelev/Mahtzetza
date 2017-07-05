@@ -1,21 +1,24 @@
 from math import sin, cos
 from copy import copy
 
+
 def get(b_arr):
     ha_arr = [0x12340FFE, 0xA3B2EF56, 0xCD53CA23, 0xE57EB124]
     length = len(ha_arr)
     unit = 0xFFFFFFFF
-    result_length = unit*length
+    result_length = unit * length
 
-    for byte in b_arr:
+    for byte in reversed(b_arr):
         curr_ind = byte % length
         #print 5 * byte + 2
         #print byte >> 1
-        ha_arr[curr_ind] *= byte >> 1| int(85.0*sin((5*byte+2)/BYTE))
+        #print 85.0*sin((5*byte+2)/float(BYTE))
+        ha_arr[curr_ind] *= byte >> 1| int(85.0*sin((5*byte+2)/float(BYTE)))
         #print ha_arr[curr_ind]
         #print 7*byte - 3
-        #print ~byte >> 2
-        ha_arr[curr_ind] += ~byte >> 2 ^ int(97.0*cos((7*byte-3)/BYTE))* unit / 2**8
+        #print ~byte << 2
+        #print int(97.0 * cos((7 * byte - 3) / float(BYTE)))
+        ha_arr[curr_ind] += ~byte << 2 ^ int(97.0*cos((7*byte-3)/float(BYTE)))* unit / BYTE
         #print ha_arr[curr_ind]
         ha_arr[curr_ind] %= unit
         ha_arr[0], ha_arr[1], ha_arr[2], ha_arr[3] = ha_arr[2], ha_arr[3], ha_arr[0], ha_arr[1]
@@ -41,13 +44,13 @@ def int_to_bytes(value):
 
 
 def main():
-    #print get(int_to_bytes(0x55))
+    #print get(int_to_bytes(0x103))
     #print 'SHLOMO'
-    #print get(int_to_bytes(0x59))
+    #print get(int_to_bytes(0x107))
     #exit()
     achieved_hashes = {}
 
-    n = 10000
+    n = 100000
     for i in xrange(n):
         hash_value = get(int_to_bytes(i))
         if hash_value not in achieved_hashes:
